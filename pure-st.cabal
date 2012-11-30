@@ -50,5 +50,5 @@ library
   -- other-modules:       
   
   -- Other library packages from which modules are imported.
-  build-depends:       base, mtl, stateref, containers == 0.4.*, transformers-base, pointed, semigroupoids, transformers
+  build-depends:       base, mtl, stateref, containers, transformers-base, pointed, semigroupoids, transformers
   
