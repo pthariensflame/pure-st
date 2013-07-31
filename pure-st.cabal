@@ -10,10 +10,10 @@ name:                pure-st
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.0
+version:             0.1.0.1
 
 -- A short (one-line) description of the package.
-synopsis:            A pure implementation of the ST monad
+synopsis:            A naive pure implementation of the ST monad
 
 -- A longer description of the package.
 -- description:         
@@ -34,12 +34,12 @@ maintainer:          alexanderaltman@me.com
 -- A copyright notice.
 -- copyright:           
 
-category:            Monads
+category:            Control, Monads
 
 build-type:          Simple
 
 -- Constraint on the version of Cabal needed to build this package.
-cabal-version:       >=1.8
+cabal-version:       >= 1.10
 
 
 library
@@ -51,4 +51,6 @@ library
   
   -- Other library packages from which modules are imported.
   build-depends:       base, mtl, stateref, containers, transformers-base, pointed, semigroupoids, transformers
+  
+  default-language:    Haskell2010
   

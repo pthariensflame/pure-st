@@ -21,7 +21,7 @@ import Control.Applicative hiding (some, many, empty)
 import qualified Control.Applicative as A
 import Data.Functor
 import Control.Monad.State.Strict hiding (join)
-import Data.IntMap
+import Data.IntMap hiding (map)
 import Control.Monad.Base
 import Control.Monad.Trans
 import Control.Monad.Identity hiding (join)
@@ -39,6 +39,8 @@ import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Data.StateRef.Types
 import Data.Maybe
+import Data.List (sort)
+import Data.Function
 import Control.Monad.Trans.State.Strict (liftCallCC)
 import Data.Monoid hiding (Any)
 import Unsafe.Coerce
@@ -135,7 +137,7 @@ instance (Typeable s, Typeable1 m) => Typeable1 (STT s m) where
 newtype STRef s a = STRef Int deriving (Typeable, Eq)
 
 runSTT :: (Monad m) => (forall s. STT s m a) -> m a
-runSTT (STT ist) = evalStateT ist (Con (concat $ zipWith (\a b -> [a, b]) [0, 1 .. maxBound] [(-1), (-2) .. minBound]) empty)
+runSTT (STT ist) = evalStateT ist (Con (map fst . sort . map (\x -> (x, abs x)) $ [minBound .. maxBound]) empty) 
 
 instance (Monad m) => WriteRef (STRef s a) (STT s m) a where
   writeReference (STRef i) x = STT . modify $ \(Con l v) -> Con l $ insert i ((unsafeCoerce :: a -> Any) x) v
