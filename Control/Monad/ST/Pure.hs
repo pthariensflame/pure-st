@@ -19,7 +19,6 @@ import Control.Monad hiding (join)
 import qualified Control.Monad as M
 import Control.Applicative hiding (some, many, empty)
 import qualified Control.Applicative as A
-import Data.Functor
 import Control.Monad.State.Strict hiding (join)
 import Data.IntMap hiding (map)
 import Control.Monad.Base
@@ -32,16 +31,12 @@ import Data.Functor.Bind.Trans
 import Data.Functor.Alt hiding (some, many)
 import qualified Data.Functor.Alt as B
 import Data.Typeable
-import Control.Monad.Fix
 import Control.Monad.Reader.Class
 import Control.Monad.Writer.Class
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Data.StateRef.Types
 import Data.Maybe
-import Data.List (sort)
-import Data.Function
-import Control.Monad.Trans.State.Strict (liftCallCC)
 import Data.Monoid hiding (Any)
 import Unsafe.Coerce
 import GHC.Exts (Any)
@@ -137,13 +132,13 @@ instance (Typeable s, Typeable1 m) => Typeable1 (STT s m) where
 newtype STRef s a = STRef Int deriving (Typeable, Eq)
 
 runSTT :: (Monad m) => (forall s. STT s m a) -> m a
-runSTT (STT ist) = evalStateT ist (Con (map fst . sort . map (\x -> (x, abs x)) $ [minBound .. maxBound]) empty) 
+runSTT (STT ist) = evalStateT ist (Con [minBound .. maxBound] empty)
 
 instance (Monad m) => WriteRef (STRef s a) (STT s m) a where
   writeReference (STRef i) x = STT . modify $ \(Con l v) -> Con l $ insert i ((unsafeCoerce :: a -> Any) x) v
 
 instance (Monad m) => ReadRef (STRef s a) (STT s m) a where
-  readReference (STRef i) = STT $ do Con l v <- get
+  readReference (STRef i) = STT $ do Con _ v <- get
                                      return . (unsafeCoerce :: Any -> a) . fromJust . lookup i $ v
 
 instance (Monad m) => ModifyRef (STRef s a) (STT s m) a where
